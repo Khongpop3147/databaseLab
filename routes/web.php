@@ -1,31 +1,43 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SocialMediaLinkController;
-use App\Http\Controllers\DiaryEntryController;
+use App\Http\Controllers\{
+    ProfileController,
+    UserController,
+    DashboardController,
+    SocialMediaLinkController,
+    DiaryEntryController,
+    ReminderController
+};
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome')->name('welcome');
 
-// Dashboard ต้องล็อกอินและยืนยันอีเมลแล้ว
-Route::middleware(['auth', 'verified'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+/**
+ * Dashboard ต้องล็อกอิน + ยืนยันอีเมล
+ */
+Route::middleware(['auth', 'verified'])
+    ->get('/dashboard', [DashboardController::class, 'index'])
+    ->name('dashboard');
 
-// กลุ่มเส้นทางที่ต้องล็อกอิน
+/**
+ * กลุ่มเส้นทางที่ต้องล็อกอิน
+ */
 Route::middleware('auth')->group(function () {
-
-    // Diary (CRUD) — ย้ายมาในกลุ่ม auth เพื่อให้แน่ใจว่าจำเป็นต้องล็อกอิน
+    // Diary (CRUD)
     Route::resource('diary', DiaryEntryController::class);
+
+    // Reminders (CRUD)
+    Route::resource('reminders', ReminderController::class);
+
+    // Social media links (CRUD)
+    Route::resource('social_media_links', SocialMediaLinkController::class);
 
     // โปรไฟล์ (Breeze มาตรฐาน)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Bio (One-to-One) — แสดงหน้าแก้ไข bio และรับการอัพเดต (showBio / updateBio ใน ProfileController)
+    // Bio (One-to-One)
     Route::get('/profile/bio', [ProfileController::class, 'showBio'])->name('profile.show-bio');
     Route::patch('/profile/bio', [ProfileController::class, 'updateBio'])->name('profile.update-bio');
 
@@ -34,12 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/photo/{filename}', [UserController::class, 'showProfilePhoto'])
         ->where('filename', '.*')
         ->name('user.photo');
+});
 
-    // Social media links (CRUD)
-    Route::resource('social_media_links', SocialMediaLinkController::class);
-});
-Route::get('/show-bio', function () {
-    return view('show-bio'); // ถ้าไฟล์อยู่ที่ resources/views/show-bio.blade.php
-});
+// ตัวอย่างหน้าโชว์ bio แบบ static (ถ้าใช้จริงให้ลบ/ย้าย)
+Route::get('/show-bio', fn () => view('show-bio'));
 
 require __DIR__.'/auth.php';
