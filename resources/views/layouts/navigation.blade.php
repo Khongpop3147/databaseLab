@@ -28,6 +28,13 @@
                         </x-nav-link>
                     @endif
 
+                    {{-- ✅ Get Conflict (Sad + includes "happy") --}}
+                    @if (Route::has('diary.conflicts'))
+                        <x-nav-link :href="route('diary.conflicts')" :active="request()->routeIs('diary.conflicts')">
+                            {{ __('Get Conflict') }}
+                        </x-nav-link>
+                    @endif
+
                     {{-- Social Links (ลบได้ถ้าไม่ใช้) --}}
                     <x-nav-link :href="route('social_media_links.index')" :active="request()->routeIs('social_media_links.*')">
                         {{ __('Social Links') }}
@@ -109,6 +116,13 @@
             @if (Route::has('reminders.index'))
                 <x-responsive-nav-link :href="route('reminders.index')" :active="request()->routeIs('reminders.*')">
                     {{ __('Reminders') }}
+                </x-responsive-nav-link>
+            @endif
+
+            {{-- ✅ Get Conflict (Sad + includes "happy") --}}
+            @if (Route::has('diary.conflicts'))
+                <x-responsive-nav-link :href="route('diary.conflicts')" :active="request()->routeIs('diary.conflicts')">
+                    {{ __('Get Conflict') }}
                 </x-responsive-nav-link>
             @endif
 

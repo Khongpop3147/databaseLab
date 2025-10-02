@@ -26,6 +26,10 @@ Route::middleware('auth')->group(function () {
     // Diary (CRUD)
     Route::resource('diary', DiaryEntryController::class);
 
+    // ✅ Conflicting Emotions (Sad+มีคำว่า "happy")
+    Route::get('/conflicts', [DiaryEntryController::class, 'conflicts'])
+        ->name('diary.conflicts');
+
     // Reminders (CRUD)
     Route::resource('reminders', ReminderController::class);
 
@@ -51,4 +55,4 @@ Route::middleware('auth')->group(function () {
 // ตัวอย่างหน้าโชว์ bio แบบ static (ถ้าใช้จริงให้ลบ/ย้าย)
 Route::get('/show-bio', fn () => view('show-bio'));
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
